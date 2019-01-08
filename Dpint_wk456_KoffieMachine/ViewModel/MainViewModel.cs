@@ -155,18 +155,14 @@ namespace Dpint_wk456_KoffieMachine.ViewModel
 
             if (_selectedDrink != null)
             {
-                RemainingPriceToPay = _selectedDrink.GetPrice();
-                LogText.Add($"Selected {_selectedDrink.Name}, price: {RemainingPriceToPay.ToString("C", CultureInfo.CurrentCulture)}");
-                RaisePropertyChanged(() => RemainingPriceToPay);
-                RaisePropertyChanged(() => SelectedDrinkName);
-                RaisePropertyChanged(() => SelectedDrinkPrice);
+                this._selectedDrink.LogSelect(this.LogText);
+                this.RemainingPriceToPay = this._selectedDrink.GetPrice();
             }
         });
 
         public ICommand DrinkWithSugarCommand => new RelayCommand<string>((drinkName) =>
         {
             _selectedDrink = null;
-            RemainingPriceToPay = 0;
             this.hasSugar = true;
             this.hasMilk = false;
 
@@ -174,47 +170,36 @@ namespace Dpint_wk456_KoffieMachine.ViewModel
 
             if (_selectedDrink != null)
             {
-                RemainingPriceToPay = _selectedDrink.GetPrice() + Drink.SugarPrice;
-                LogText.Add($"Selected {_selectedDrink.Name} with sugar, price: {RemainingPriceToPay.ToString("C", CultureInfo.CurrentCulture)}");
-                RaisePropertyChanged(() => RemainingPriceToPay);
-                RaisePropertyChanged(() => SelectedDrinkName);
-                RaisePropertyChanged(() => SelectedDrinkPrice);
+                this._selectedDrink.LogSelect(this.LogText);
+                this.RemainingPriceToPay = this._selectedDrink.GetPrice();
             }
         });
 
         public ICommand DrinkWithMilkCommand => new RelayCommand<string>((drinkName) =>
         {
             this.hasSugar = false;
-            RemainingPriceToPay = 0;
             this.hasMilk = true;
 
             this._selectedDrink = this._drinkFactory.CreateDrink(drinkName, this.hasSugar, this.hasMilk, this._sugarAmount, this._milkAmount, this._coffeeStrength);
 
             if (_selectedDrink != null)
             {
-                RemainingPriceToPay = _selectedDrink.GetPrice() + Drink.MilkPrice;
-                LogText.Add($"Selected {_selectedDrink.Name} with milk, price: {RemainingPriceToPay}");
-                RaisePropertyChanged(() => RemainingPriceToPay);
-                RaisePropertyChanged(() => SelectedDrinkName);
-                RaisePropertyChanged(() => SelectedDrinkPrice);
+                this._selectedDrink.LogSelect(this.LogText);
+                this.RemainingPriceToPay = this._selectedDrink.GetPrice();
             }
         });
 
         public ICommand DrinkWithSugarAndMilkCommand => new RelayCommand<string>((drinkName) =>
         {
             this.hasSugar = true;
-            RemainingPriceToPay = 0;
             this.hasMilk = true;
 
             this._selectedDrink = this._drinkFactory.CreateDrink(drinkName, this.hasSugar, this.hasMilk, this._sugarAmount, this._milkAmount, this._coffeeStrength);
 
             if (_selectedDrink != null)
             {
-                RemainingPriceToPay = _selectedDrink.GetPrice() + Drink.SugarPrice + Drink.MilkPrice;
-                LogText.Add($"Selected {_selectedDrink.Name} with sugar and milk, price: {RemainingPriceToPay}");
-                RaisePropertyChanged(() => RemainingPriceToPay);
-                RaisePropertyChanged(() => SelectedDrinkName);
-                RaisePropertyChanged(() => SelectedDrinkPrice);
+                this._selectedDrink.LogSelect(this.LogText);
+                this.RemainingPriceToPay = this._selectedDrink.GetPrice();
             }
         });
 

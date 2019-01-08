@@ -15,7 +15,7 @@ namespace Dpint_wk456_KoffieMachine.Factory
 
         public const string COFFEE = "Coffee";
         public const string CAFE_AU_LAIT = "Café au Lait";
-        public const string CAPPUCCINO = "Cappuccino";
+        public const string CAPPUCCINO = "Capuccino";
         public const string ESPRESSO = "Espresso";
         public const string WIENER_MELANGE = "Wiener Melange";
 

@@ -18,6 +18,8 @@ namespace KoffieMachineDomain.Interface
 
 
         double Price { get; set; }
+        double SugarPrice { get; set; }
+        double MilkPrice { get; set; }
 
         double GetPrice();
 
@@ -26,6 +28,7 @@ namespace KoffieMachineDomain.Interface
 
 
         void LogDrinkMaking(ICollection<string> log);
+        void LogSelect(ICollection<string> log);
 
     }
 }

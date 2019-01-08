@@ -1,6 +1,7 @@
 ﻿using KoffieMachineDomain.Interface;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,7 +15,25 @@ namespace KoffieMachineDomain.Decorators
             this.Name = "Espresso";
         }
 
-        public override double Price { get => base.Price; set => base.Price = value; }
+        public override double GetPrice()
+        {
+            double price = Price;
+
+            if (HasSugar)
+            {
+                price += SugarPrice;
+            }
+
+            if (HasMilk)
+            {
+                price += MilkPrice;
+            }
+
+
+            return price;
+        }
+
+
 
         public override Amount SugarAmount { get => base.SugarAmount; set => base.SugarAmount = value; }
 
@@ -34,6 +53,27 @@ namespace KoffieMachineDomain.Decorators
             log.Add("Creaming milk...");
             log.Add("Adding milk to coffee...");
             log.Add($"Finished making {Name}");
+        }
+
+        public override void LogSelect(ICollection<string> log)
+        {
+            base.LogSelect(log);
+            if (HasMilk && HasSugar)
+            {
+                log.Add($"Selected {Name } with sugar and milk, price: { GetPrice().ToString("C", CultureInfo.CurrentCulture)}");
+            }
+            else if (HasSugar)
+            {
+                log.Add($"Selected { Name} with sugar, price: { GetPrice().ToString("C", CultureInfo.CurrentCulture)}");
+            }
+            else if (HasMilk)
+            {
+                log.Add($"Selected { Name} with milk, price: { GetPrice().ToString("C", CultureInfo.CurrentCulture)}");
+            }
+            else
+            {
+                log.Add($"Selected { Name}, price: { GetPrice().ToString("C", CultureInfo.CurrentCulture)}");
+            }
         }
     }
 }

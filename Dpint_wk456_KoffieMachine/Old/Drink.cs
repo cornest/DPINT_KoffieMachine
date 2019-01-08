@@ -15,14 +15,12 @@ namespace KoffieMachineDomain
             this.HasMilk = hasMilk;
             this.MilkAmount = milkAmount;
             this.SugarAmount = sugarAmount;
-            this.Price = BaseDrinkPrice;
+            this.Price = 1.0;
             this.DrinkStrength = drinkStrength;
+            this.SugarPrice = 0.1;
+            this.MilkPrice = 0.15;
          }
 
-
-        public static readonly double SugarPrice = 0.1;
-        public static readonly double MilkPrice = 0.15;
-        protected const double BaseDrinkPrice = 1.0;
         public virtual string Name { get; set; }
 
         public bool HasSugar { get; set; }
@@ -31,6 +29,8 @@ namespace KoffieMachineDomain
         public bool HasMilk { get; set; }
         public double Price { get; set; }
         public Strength DrinkStrength { get; set; }
+        public double SugarPrice { get; set; }
+        public double MilkPrice { get; set; }
 
         public double GetPrice()
         {
@@ -41,6 +41,11 @@ namespace KoffieMachineDomain
         {
            log.Add($"Making {this.Name}...");
            log.Add($"Heating up...");
+        }
+
+        public void LogSelect(ICollection<string> log)
+        {
+            return;
         }
     }
 }

@@ -51,6 +51,17 @@ namespace KoffieMachineDomain.Decorators
             set { Drink.HasSugar = value; }
         }
 
+        public virtual double SugarPrice
+        {
+            get { return Drink.SugarPrice; }
+            set { Drink.SugarPrice = value;  }
+        }
+
+        public virtual double MilkPrice
+        {
+            get { return Drink.MilkPrice; }
+            set { Drink.MilkPrice = value; }
+        }
 
         public virtual bool HasMilk
         {
@@ -66,6 +77,11 @@ namespace KoffieMachineDomain.Decorators
         public virtual void LogDrinkMaking(ICollection<string> log)
         {
             Drink.LogDrinkMaking(log);
+        }
+
+        public virtual void LogSelect(ICollection<string> log)
+        {
+            Drink.LogSelect(log);
         }
     }
 }

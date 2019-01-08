@@ -1,6 +1,7 @@
 ﻿using KoffieMachineDomain.Interface;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,12 +12,18 @@ namespace KoffieMachineDomain.Decorators
     {
         public CappuccinoDrinkDecorator(IDrink drink) : base(drink)
         {
-            this.Name = "Cappuccino";
+            this.Name = "Capuccino";
         }
 
         public override double GetPrice()
         {
             double price = base.GetPrice() + 0.5;
+
+            if (HasSugar)
+            {
+                price += SugarPrice;
+            }
+
             return price;
         }
 
@@ -35,6 +42,20 @@ namespace KoffieMachineDomain.Decorators
             log.Add("Creaming milk...");
             log.Add("Adding milk to coffee...");
             log.Add($"Finished making {Name}");
+        }
+
+        public override void LogSelect(ICollection<string> log)
+        {
+            base.LogSelect(log);
+
+            if (HasSugar)
+            {
+                log.Add($"Selected {this.Name}, with sugar, price: {this.GetPrice().ToString("C", CultureInfo.CurrentCulture)}");
+            }
+            else
+            {
+                log.Add($"Selected {this.Name}, price: {this.GetPrice().ToString("C", CultureInfo.CurrentCulture)}");
+            }
         }
     }
 }

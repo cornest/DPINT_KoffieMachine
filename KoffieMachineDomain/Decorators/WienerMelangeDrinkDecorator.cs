@@ -1,6 +1,7 @@
 ﻿using KoffieMachineDomain.Interface;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -39,6 +40,12 @@ namespace KoffieMachineDomain.Decorators
             }
 
             log.Add($"Finished making {Name}");
+        }
+
+        public override void LogSelect(ICollection<string> log)
+        {
+            base.LogSelect(log);
+            log.Add($"Selected {this.Name}, price: {this.GetPrice().ToString("C", CultureInfo.CurrentCulture)}");
         }
     }
 }
