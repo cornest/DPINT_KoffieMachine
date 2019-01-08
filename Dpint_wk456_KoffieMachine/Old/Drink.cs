@@ -9,17 +9,14 @@ namespace KoffieMachineDomain
 {
     public class Drink : IDrink
     {
-        public Drink(bool hasSugar, bool hasMilk, Amount sugarAmount, Amount milkAmount, double price, Strength drinkStrength)
+        public Drink(bool hasSugar, bool hasMilk, Amount sugarAmount, Amount milkAmount, Strength drinkStrength)
         {
             this.HasSugar = hasSugar;
-            this.HasMilk = HasMilk;
+            this.HasMilk = hasMilk;
             this.MilkAmount = milkAmount;
             this.SugarAmount = sugarAmount;
-            this.Price = price;
+            this.Price = BaseDrinkPrice;
             this.DrinkStrength = drinkStrength;
-
-            // Sugar/Milk/BaseDrinkPrice?
-
          }
 
 

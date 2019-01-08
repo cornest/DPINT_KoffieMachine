@@ -2,6 +2,7 @@ using Dpint_wk456_KoffieMachine.Factory;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using KoffieMachineDomain;
+using KoffieMachineDomain.Interface;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -14,6 +15,8 @@ namespace Dpint_wk456_KoffieMachine.ViewModel
     {
 
         private DrinkFactory _drinkFactory;
+        private bool hasMilk = false;
+        private bool hasSugar = false;
 
         private Dictionary<string, double> _cashOnCards;
         public ObservableCollection<string> LogText { get; private set; }
@@ -37,10 +40,11 @@ namespace Dpint_wk456_KoffieMachine.ViewModel
             _cashOnCards["Daan"] = 6.0;
             PaymentCardUsernames = new ObservableCollection<string>(_cashOnCards.Keys);
             SelectedPaymentCardUsername = PaymentCardUsernames[0];
+
         }
 
         #region Drink properties to bind to
-        private Drink _selectedDrink;
+        private IDrink _selectedDrink;
         public string SelectedDrinkName
         {
             get { return _selectedDrink?.Name; }
@@ -145,29 +149,11 @@ namespace Dpint_wk456_KoffieMachine.ViewModel
         public ICommand DrinkCommand => new RelayCommand<string>((drinkName) =>
         {
             _selectedDrink = null;
-            switch (drinkName)
-            {
-                case "Coffee":
-                    _selectedDrink = new Coffee() { DrinkStrength = CoffeeStrength };
-                    break;
-                case "Espresso":
-                    _selectedDrink = new Espresso();
-                    break;
-                case "Capuccino":
-                    _selectedDrink = new Capuccino();
-                    break;
-                case "Wiener Melange":
-                    _selectedDrink = new WienerMelange();
-                    break;
-                case "Café au Lait":
-                    _selectedDrink = new CafeAuLait();
-                    break;
-                default:
-                    LogText.Add($"Could not make {drinkName}, recipe not found.");
-                    break;
-            }
-            
-            if(_selectedDrink != null)
+            this.hasSugar = false;
+            this.hasMilk = false;
+            this._selectedDrink = this._drinkFactory.CreateDrink(drinkName, this.hasSugar, this.hasMilk, this._sugarAmount, this._milkAmount, this._coffeeStrength);
+
+            if (_selectedDrink != null)
             {
                 RemainingPriceToPay = _selectedDrink.GetPrice();
                 LogText.Add($"Selected {_selectedDrink.Name}, price: {RemainingPriceToPay.ToString("C", CultureInfo.CurrentCulture)}");
@@ -181,24 +167,10 @@ namespace Dpint_wk456_KoffieMachine.ViewModel
         {
             _selectedDrink = null;
             RemainingPriceToPay = 0;
-            switch (drinkName)
-            {
-                case "Coffee":
-                    _selectedDrink = new Coffee() { DrinkStrength = CoffeeStrength, HasSugar = true, SugarAmount = SugarAmount };
-                    break;
-                case "Espresso":
-                    _selectedDrink = new Espresso(){ HasSugar = true, SugarAmount = SugarAmount };
-                    break;
-                case "Capuccino":
-                    _selectedDrink = new Capuccino() { HasSugar = true, SugarAmount = SugarAmount };
-                    break;
-                case "Wiener Melange":
-                    _selectedDrink = new WienerMelange() { HasSugar = true, SugarAmount = SugarAmount };
-                    break;
-                default:
-                    LogText.Add($"Could not make {drinkName} with sugar, recipe not found.");
-                    break;
-            }
+            this.hasSugar = true;
+            this.hasMilk = false;
+
+            this._selectedDrink = this._drinkFactory.CreateDrink(drinkName, this.hasSugar, this.hasMilk, this._sugarAmount, this._milkAmount, this._coffeeStrength);
 
             if (_selectedDrink != null)
             {
@@ -212,18 +184,11 @@ namespace Dpint_wk456_KoffieMachine.ViewModel
 
         public ICommand DrinkWithMilkCommand => new RelayCommand<string>((drinkName) =>
         {
-            switch (drinkName)
-            {
-                case "Coffee":
-                    _selectedDrink = new Coffee() { DrinkStrength = CoffeeStrength, HasMilk = true, MilkAmount = MilkAmount };
-                    break;
-                case "Espresso":
-                    _selectedDrink = new Espresso() { HasMilk = true, MilkAmount = MilkAmount };
-                    break;
-                default:
-                    LogText.Add($"Could not make {drinkName} with milk, recipe not found.");
-                    break;
-            }
+            this.hasSugar = false;
+            RemainingPriceToPay = 0;
+            this.hasMilk = true;
+
+            this._selectedDrink = this._drinkFactory.CreateDrink(drinkName, this.hasSugar, this.hasMilk, this._sugarAmount, this._milkAmount, this._coffeeStrength);
 
             if (_selectedDrink != null)
             {
@@ -237,20 +202,11 @@ namespace Dpint_wk456_KoffieMachine.ViewModel
 
         public ICommand DrinkWithSugarAndMilkCommand => new RelayCommand<string>((drinkName) =>
         {
-            _selectedDrink = null;
+            this.hasSugar = true;
             RemainingPriceToPay = 0;
-            switch (drinkName)
-            {
-                case "Coffee":
-                    _selectedDrink = new Coffee() { DrinkStrength = CoffeeStrength, HasSugar = true, SugarAmount = SugarAmount, HasMilk = true, MilkAmount = MilkAmount };
-                    break;
-                case "Espresso":
-                    _selectedDrink = new Espresso() { HasSugar = true, SugarAmount = SugarAmount, HasMilk = true, MilkAmount = MilkAmount };
-                    break;
-                default:
-                    LogText.Add($"Could not make {drinkName} with milk, recipe not found.");
-                    break;
-            }
+            this.hasMilk = true;
+
+            this._selectedDrink = this._drinkFactory.CreateDrink(drinkName, this.hasSugar, this.hasMilk, this._sugarAmount, this._milkAmount, this._coffeeStrength);
 
             if (_selectedDrink != null)
             {

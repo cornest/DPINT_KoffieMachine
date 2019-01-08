@@ -11,7 +11,7 @@ namespace KoffieMachineDomain.Decorators
     {
         public CafeAuLaitDrinkDecorator(IDrink drink) : base(drink)
         {
-            this.Name = "Cafe au lait";
+            this.Name = "Café au lait";
         }
 
         public override double GetPrice() {          

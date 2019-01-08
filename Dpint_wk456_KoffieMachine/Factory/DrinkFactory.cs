@@ -29,15 +29,13 @@ namespace Dpint_wk456_KoffieMachine.Factory
             DrinkOptions[WIENER_MELANGE] = "Wiener Melange description";
         }
 
-        public IDrink CreateDrink(bool hasSugar, bool hasMilk, Amount sugarAmount, Amount milkAmount, double price, Strength drinkStrength, IEnumerable<string> drinkOptions)
+        public IDrink CreateDrink(string option, bool hasSugar, bool hasMilk, Amount sugarAmount, Amount milkAmount, Strength drinkStrength)
         {
-            IDrink newDrink = new Drink(hasSugar, hasMilk, sugarAmount, milkAmount, price, drinkStrength);
+            IDrink newDrink = new Drink(hasSugar, hasMilk, sugarAmount, milkAmount, drinkStrength);
 
-            foreach (var option in drinkOptions)
+            switch (option)
             {
-                switch (option)
-                {
-                    case COFFEE:
+             case COFFEE:
                         newDrink = new CoffeeDrinkDecorator(newDrink);
                         break;
                     case CAFE_AU_LAIT:
@@ -55,7 +53,6 @@ namespace Dpint_wk456_KoffieMachine.Factory
                     default:
                         break;
                 }
-            }
             return newDrink;
         }
     }

@@ -19,6 +19,7 @@ namespace KoffieMachineDomain.Decorators
             double price = base.GetPrice() * 2;
             return price;
         }
+
         public override void LogDrinkMaking(ICollection<string> log)
         {
             base.LogDrinkMaking(log);
