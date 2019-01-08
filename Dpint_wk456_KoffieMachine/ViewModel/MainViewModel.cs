@@ -1,3 +1,4 @@
+using Dpint_wk456_KoffieMachine.Factory;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using KoffieMachineDomain;
@@ -11,11 +12,16 @@ namespace Dpint_wk456_KoffieMachine.ViewModel
 {
     public class MainViewModel : ViewModelBase
     {
+
+        private DrinkFactory _drinkFactory;
+
         private Dictionary<string, double> _cashOnCards;
         public ObservableCollection<string> LogText { get; private set; }
 
         public MainViewModel()
         {
+            _drinkFactory = new DrinkFactory();
+
             _coffeeStrength = Strength.Normal;
             _sugarAmount = Amount.Normal;
             _milkAmount = Amount.Normal;
