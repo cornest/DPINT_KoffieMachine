@@ -23,12 +23,6 @@ namespace KoffieMachineDomain.Decorators
         public override void LogDrinkMaking(ICollection<string> log)
         {
             base.LogDrinkMaking(log);
-            //log.Add($"Setting coffee strength to {this.DrinkStrength}.");
-            //log.Add("Filling with coffee...");
-            //log.Add("Creaming milk...");
-            //log.Add("Adding milk to coffee...");
-            //log.Add($"Finished making {this.Name}");
-
             log.Add("Filling half with coffee...");
             log.Add("Filling other half with milk...");
             log.Add($"Finished making {Name}");

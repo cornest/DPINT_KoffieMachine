@@ -28,8 +28,6 @@ namespace KoffieMachineDomain.Decorators
             {
                 price += MilkPrice;
             }
-
-
             return price;
         }
 

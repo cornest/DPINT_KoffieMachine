@@ -33,8 +33,6 @@ namespace KoffieMachineDomain.Decorators
             return price;
         }
 
-
-
         public override Amount SugarAmount { get => base.SugarAmount; set => base.SugarAmount = value; }
 
         public override void LogDrinkMaking(ICollection<string> log)
