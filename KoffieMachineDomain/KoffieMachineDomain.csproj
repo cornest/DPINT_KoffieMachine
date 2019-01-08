@@ -38,12 +38,16 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="TeaAndChocoLibrary">
+      <HintPath>..\TeaAndChocoLibrary.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Amount.cs" />
     <Compile Include="Decorators\BaseDrinkDecorator.cs" />
     <Compile Include="Decorators\CafeAuLaitDrinkDecorator.cs" />
     <Compile Include="Decorators\CappuccinoDrinkDecorator.cs" />
+    <Compile Include="Decorators\ChocolateDrinkDecorator.cs" />
     <Compile Include="Decorators\CoffeeDrinkDecorator.cs" />
     <Compile Include="Decorators\EspressoDrinkDecorator.cs" />
     <Compile Include="Decorators\WienerMelangeDrinkDecorator.cs" />

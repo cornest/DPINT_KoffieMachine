@@ -18,6 +18,9 @@ namespace Dpint_wk456_KoffieMachine.Factory
         public const string CAPPUCCINO = "Capuccino";
         public const string ESPRESSO = "Espresso";
         public const string WIENER_MELANGE = "Wiener Melange";
+        public const string CHOCOLATE = "Chocolate";
+        public const string CHOCOLATE_DELUXE = "Chocolate Deluxe";
+
 
         public DrinkFactory()
         {
@@ -27,6 +30,9 @@ namespace Dpint_wk456_KoffieMachine.Factory
             DrinkOptions[CAPPUCCINO] = "Cappuccino description";
             DrinkOptions[ESPRESSO] = "Esspresso description";
             DrinkOptions[WIENER_MELANGE] = "Wiener Melange description";
+            DrinkOptions[CHOCOLATE] = "Hot chocolate ";
+            DrinkOptions[CHOCOLATE_DELUXE] = "Hot chocolate deluxe";
+
         }
 
         public IDrink CreateDrink(string option, bool hasSugar, bool hasMilk, Amount sugarAmount, Amount milkAmount, Strength drinkStrength)
@@ -50,7 +56,13 @@ namespace Dpint_wk456_KoffieMachine.Factory
                     case WIENER_MELANGE:
                         newDrink = new WienerMelangeDrinkDecorator(newDrink);
                         break;
-                    default:
+                    case CHOCOLATE:
+                        newDrink = new ChocolateDrinkDecorator(newDrink, false);
+                        break;
+                    case CHOCOLATE_DELUXE:
+                        newDrink = new ChocolateDrinkDecorator(newDrink, true);
+                        break;
+                default:
                         break;
                 }
             return newDrink;
