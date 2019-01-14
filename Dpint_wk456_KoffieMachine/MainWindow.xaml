@@ -135,7 +135,7 @@
                 <Button Command="{Binding DrinkWithSugarCommand}" CommandParameter="Tea" Style="{StaticResource DrinkButton}">
                     <TextBlock>Tea + sugar</TextBlock>
                 </Button>
-                <TextBlock TextWrapping="WrapWithOverflow" Width="250">How to choose your teablend? //TODO: Make this work!</TextBlock>
+                <ComboBox x:Name="TeaSelection" ItemsSource="{Binding Blends}" SelectedItem="{Binding SelectedBlendName}"  Margin="5" SelectedIndex="0"/>
             </StackPanel>
         </StackPanel>
         <StackPanel Grid.Column="2" Orientation="Vertical" Margin="5" Name="Payment">

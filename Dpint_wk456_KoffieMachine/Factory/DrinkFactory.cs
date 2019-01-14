@@ -13,56 +13,51 @@ namespace Dpint_wk456_KoffieMachine.Factory
     {
         public Dictionary<string, string> DrinkOptions { get; private set; }
 
-        public const string COFFEE = "Coffee";
-        public const string CAFE_AU_LAIT = "Café au Lait";
-        public const string CAPPUCCINO = "Capuccino";
-        public const string ESPRESSO = "Espresso";
-        public const string WIENER_MELANGE = "Wiener Melange";
-        public const string CHOCOLATE = "Chocolate";
-        public const string CHOCOLATE_DELUXE = "Chocolate Deluxe";
-
-
         public DrinkFactory()
         {
             DrinkOptions = new Dictionary<string, string>();
-            DrinkOptions[COFFEE] = "Coffee description";
-            DrinkOptions[CAFE_AU_LAIT] = "Café au lait description";
-            DrinkOptions[CAPPUCCINO] = "Cappuccino description";
-            DrinkOptions[ESPRESSO] = "Esspresso description";
-            DrinkOptions[WIENER_MELANGE] = "Wiener Melange description";
-            DrinkOptions[CHOCOLATE] = "Hot chocolate ";
-            DrinkOptions[CHOCOLATE_DELUXE] = "Hot chocolate deluxe";
+            DrinkOptions["Coffee"] = "Coffee description";
+            DrinkOptions["Café au Lait"] = "Café au lait description";
+            DrinkOptions["Capuccino"] = "Cappuccino description";
+            DrinkOptions["Espresso"] = "Esspresso description";
+            DrinkOptions["Wiener Melange"] = "Wiener Melange description";
+            DrinkOptions["Chocolate"] = "Hot chocolate ";
+            DrinkOptions["Chocolate Deluxe"] = "Hot chocolate deluxe";
+            DrinkOptions["Tea"] = "Hot water";
 
         }
 
-        public IDrink CreateDrink(string option, bool hasSugar, bool hasMilk, Amount sugarAmount, Amount milkAmount, Strength drinkStrength)
+        public IDrink CreateDrink(string option, bool hasSugar, bool hasMilk, Amount sugarAmount, Amount milkAmount, Strength drinkStrength, string blendName = "")
         {
             IDrink newDrink = new Drink(hasSugar, hasMilk, sugarAmount, milkAmount, drinkStrength);
 
             switch (option)
             {
-             case COFFEE:
+                    case "Coffee":
                         newDrink = new CoffeeDrinkDecorator(newDrink);
                         break;
-                    case CAFE_AU_LAIT:
+                    case "Café au Lait":
                         newDrink = new CafeAuLaitDrinkDecorator(newDrink);
                         break;
-                    case CAPPUCCINO:
+                    case "Capuccino":
                         newDrink = new CappuccinoDrinkDecorator(newDrink);
                         break;
-                    case ESPRESSO:
+                    case "Espresso":
                         newDrink = new EspressoDrinkDecorator(newDrink);
                         break;
-                    case WIENER_MELANGE:
+                    case "Wiener Melange":
                         newDrink = new WienerMelangeDrinkDecorator(newDrink);
                         break;
-                    case CHOCOLATE:
+                    case "Chocolate":
                         newDrink = new ChocolateDrinkDecorator(newDrink, false);
                         break;
-                    case CHOCOLATE_DELUXE:
+                    case "Chocolate Deluxe":
                         newDrink = new ChocolateDrinkDecorator(newDrink, true);
                         break;
-                default:
+                    case "Tea":
+                        newDrink = new TeaDrinkDecorator(newDrink, blendName);
+                        break;
+                    default:
                         break;
                 }
             return newDrink;

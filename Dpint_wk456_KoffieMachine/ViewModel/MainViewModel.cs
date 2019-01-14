@@ -7,24 +7,32 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Linq;
 using System.Windows.Input;
+using TeaAndChocoLibrary;
 
 namespace Dpint_wk456_KoffieMachine.ViewModel
 {
     public class MainViewModel : ViewModelBase
     {
-
         private DrinkFactory _drinkFactory;
+        private PaymentFactory _paymentFactory;
         private bool hasMilk = false;
         private bool hasSugar = false;
-
-        private Dictionary<string, double> _cashOnCards;
+        private Strength _coffeeStrength;
+        private Amount _sugarAmount;
+        private Amount _milkAmount;
+        private TeaBlendRepository _teaBlendRepository;
         public ObservableCollection<string> LogText { get; private set; }
+        public ObservableCollection<string> Blends { get; private set; }
 
         public MainViewModel()
         {
+            _teaBlendRepository = new TeaBlendRepository();
+            Blends = new ObservableCollection<string>(_teaBlendRepository.BlendNames);
             _drinkFactory = new DrinkFactory();
-
+            _paymentFactory = new PaymentFactory();
+            
             _coffeeStrength = Strength.Normal;
             _sugarAmount = Amount.Normal;
             _milkAmount = Amount.Normal;
@@ -32,15 +40,8 @@ namespace Dpint_wk456_KoffieMachine.ViewModel
             LogText = new ObservableCollection<string>();
             LogText.Add("Starting up...");
             LogText.Add("Done, what would you like to drink?");
-
-            _cashOnCards = new Dictionary<string, double>();
-            _cashOnCards["Arjen"] = 5.0;
-            _cashOnCards["Bert"] = 3.5;
-            _cashOnCards["Chris"] = 7.0;
-            _cashOnCards["Daan"] = 6.0;
-            PaymentCardUsernames = new ObservableCollection<string>(_cashOnCards.Keys);
+            PaymentCardUsernames = new ObservableCollection<string>(_paymentFactory.Pay("CARD").GetCashOnCards().Keys);
             SelectedPaymentCardUsername = PaymentCardUsernames[0];
-
         }
 
         #region Drink properties to bind to
@@ -50,6 +51,8 @@ namespace Dpint_wk456_KoffieMachine.ViewModel
             get { return _selectedDrink?.Name; }
         }
 
+        public string SelectedBlendName { get; set; }
+
         public double? SelectedDrinkPrice
         {
             get { return _selectedDrink?.GetPrice(); }
@@ -57,51 +60,39 @@ namespace Dpint_wk456_KoffieMachine.ViewModel
         #endregion Drink properties to bind to
 
         #region Payment
-        public RelayCommand PayByCardCommand => new RelayCommand(() =>
+        public ICommand PayByCardCommand => new RelayCommand(() =>
         {
-            PayDrink(payWithCard: true);
+            if (this._selectedDrink != null)
+            {
+                PayDrink("CARD");
+            }
         });
 
         public ICommand PayByCoinCommand => new RelayCommand<double>(coinValue =>
         {
-            PayDrink(payWithCard: false, insertedMoney: coinValue);
+            if(this._selectedDrink != null)
+            {
+                PayDrink("CASH", insertedMoney: coinValue);
+            }
+
         });
 
-        private void PayDrink(bool payWithCard, double insertedMoney = 0)
+        private void PayDrink(string PayMethod, double insertedMoney = 0)
         {
-            if (_selectedDrink != null && payWithCard)
-            {
-                insertedMoney = _cashOnCards[SelectedPaymentCardUsername];
-                if (RemainingPriceToPay <= insertedMoney)
-                {
-                    _cashOnCards[SelectedPaymentCardUsername] = insertedMoney - RemainingPriceToPay;
-                    RemainingPriceToPay = 0;
-                }
-                else // Pay what you can, fill up with coins later.
-                {
-                    _cashOnCards[SelectedPaymentCardUsername] = 0;
-                    
-                    RemainingPriceToPay -= insertedMoney;
-                }
-                LogText.Add($"Inserted {insertedMoney.ToString("C", CultureInfo.CurrentCulture)}, Remaining: {RemainingPriceToPay.ToString("C", CultureInfo.CurrentCulture)}.");
-                RaisePropertyChanged(() => PaymentCardRemainingAmount);
-            }
-            else if (_selectedDrink != null && !payWithCard)
-            {
-                RemainingPriceToPay = Math.Max(Math.Round(RemainingPriceToPay - insertedMoney, 2), 0);
-                LogText.Add($"Inserted {insertedMoney.ToString("C", CultureInfo.CurrentCulture)}, Remaining: {RemainingPriceToPay.ToString("C", CultureInfo.CurrentCulture)}.");
-            }
+            RemainingPriceToPay = _paymentFactory.Pay(PayMethod).remainingPriceToPay(this._selectedDrink, this._selectedPaymentCardUsername, this._remainingPriceToPay, LogText, insertedMoney);
 
-            if (_selectedDrink != null && RemainingPriceToPay == 0)
+            if (RemainingPriceToPay == 0)
             {
                 _selectedDrink.LogDrinkMaking(LogText);
                 LogText.Add("------------------");
                 _selectedDrink = null;
             }
-        }
-        
 
-        public double PaymentCardRemainingAmount => _cashOnCards.ContainsKey(SelectedPaymentCardUsername ?? "") ? _cashOnCards[SelectedPaymentCardUsername] : 0;
+            this.RaisePropertyChanged(() => this.PaymentCardRemainingAmount);
+        }
+
+
+        public double PaymentCardRemainingAmount => _paymentFactory.Pay("CARD").GetCashOnCards().Single(x => x.Key == this.SelectedPaymentCardUsername).Value;
 
         public ObservableCollection<string> PaymentCardUsernames { get; set; }
         private string _selectedPaymentCardUsername;
@@ -125,21 +116,21 @@ namespace Dpint_wk456_KoffieMachine.ViewModel
         #endregion Payment
 
         #region Coffee buttons
-        private Strength _coffeeStrength;
+
         public Strength CoffeeStrength
         {
             get { return _coffeeStrength; }
             set { _coffeeStrength = value; RaisePropertyChanged(() => CoffeeStrength); }
         }
 
-        private Amount _sugarAmount;
+
         public Amount SugarAmount
         {
             get { return _sugarAmount; }
             set { _sugarAmount = value; RaisePropertyChanged(() => SugarAmount); }
         }
 
-        private Amount _milkAmount;
+
         public Amount MilkAmount
         {
             get { return _milkAmount; }
@@ -151,7 +142,7 @@ namespace Dpint_wk456_KoffieMachine.ViewModel
             _selectedDrink = null;
             this.hasSugar = false;
             this.hasMilk = false;
-            this._selectedDrink = this._drinkFactory.CreateDrink(drinkName, this.hasSugar, this.hasMilk, this._sugarAmount, this._milkAmount, this._coffeeStrength);
+            this._selectedDrink = this._drinkFactory.CreateDrink(drinkName, this.hasSugar, this.hasMilk, this._sugarAmount, this._milkAmount, this._coffeeStrength, SelectedBlendName);
 
             if (_selectedDrink != null)
             {
@@ -166,7 +157,7 @@ namespace Dpint_wk456_KoffieMachine.ViewModel
             this.hasSugar = true;
             this.hasMilk = false;
 
-            this._selectedDrink = this._drinkFactory.CreateDrink(drinkName, this.hasSugar, this.hasMilk, this._sugarAmount, this._milkAmount, this._coffeeStrength);
+            this._selectedDrink = this._drinkFactory.CreateDrink(drinkName, this.hasSugar, this.hasMilk, this._sugarAmount, this._milkAmount, this._coffeeStrength, SelectedBlendName);
 
             if (_selectedDrink != null)
             {
